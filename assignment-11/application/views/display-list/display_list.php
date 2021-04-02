@@ -9,48 +9,50 @@ $this->load->view('layout/sidebar');
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>DashBoard/LISTS</h1>
+            <h1>DashBoard/Member Lists</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Property</li>
+              <li class="breadcrumb-item active">Member List</li>
             </ol>
           </div>
         </div>
       </div><!-- /.container-fluid -->
-    </section>
+</section>
 <div class="card card-primary card-outline card-outline-tabs">
-<div class="card-header m-4">
-                <h3 class="card-title ">
-                  <div class="input-group" style="display:flex;">
-                    <span style="font-size: 16px;margin-top:7px;"> Show list &nbsp</span>
-                    <select name="" class="form-control float-left" id="table-show-list" style="width: 100px;">
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select> 
-                    <span style="font-size: 16px;margin-top:7px;">&nbspEntries</span>
-                  </div>
-                </h3>
-                <div class="card-tools" style="display:inherit;">
-                  <div class="input-group" style="width: 350px;display:flex;">
-                    <input type="text" name="table_search" id="searchBox" class="form-control float-right" placeholder="Search">
-                   <!--  <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button> -->
-                  </div>
-                </div>
- </div>
-	<div class="card-body">
+ 	<div class="card-body">
         <div class="col-xl-12">
-					<div class="table-response" id="load-KSA-list"></div>
-          <div align="right" id="pagination_link"></div>
-         
-         
-          <button type="button" class="btn btn-primary" id="export-pdf-btn">Export PDF</a>
+           <input type='hidden' id='sort' value='asc'>
+					<div class="table-response" id="load-KSA-list">
+            <table id="tableID" class="table table-bordered" style="font-size:9px;table-layout:fixed;width:100%;word-break:break-all;">
+
+            </table>
+          </div>
+          <div class="row">
+              <div class="col-xl-6 mt-3">
+                  <div class="row" style="margin-left: -7px;">
+                    <?php echo form_open_multipart('',['id'=>'excel_file_upload','data-parsley-validate'=>'true'])?>
+                        <div class="col-sm-10 ">
+                          <div class="form-group">
+                            <label for="">Import Excel Sheet (Only .xlsx, .xls, .csv Extension File) </label><br>
+                            <input type="file" name="excel_file" id="excel_file" placeholder="select xls,csv,xlsx extensions" data-parsley-required="true">
+                          </div>
+                        </div>
+                        <div class="col-sm-2"style="margin-top: 19px;" >
+                            <button type="submit" id="import_btn"class="btn btn-primary btn-sm">IMPORT</button>
+                        </div> 
+                    <?php echo form_close()?>
+                  </div>
+              </div>
+            <!--   <div class="col-xl-6">
+                    <div align="right" id="pagination_link"></div>
+              </div> -->
+          </div>
+          <button type="button" class="btn btn-primary" id="export-pdf-btn" data-colounm_name="" data-orderby_colunm="">Export PDF</a>
           <?php echo form_close()?>
           
-          <button type="button" class="btn btn-success" id="export-excel-btn">Export Excel</a>
+          <button type="button" class="btn btn-success" id="export-excel-btn" data-colounm_name="" data-orderby_colunm="">Export Excel</a>
           
         </div>
 	</div>

@@ -9,11 +9,11 @@ class list_pagination_model extends CI_Model{
 	}
 	function fetch_details($search,$limit,$start){
 		$output='';
-		$this->db->like('city',$search)->or_like('city',$search)->like('ADDR1',$search);
+		$this->db->like('city',$search)->or_like('city',$search)->like('ADDR1',$search)->like('ADDR2',$search)->like('ADDR3',$search);
 		$this->db->like('NAME',$search)->or_like('TITLE',$search)->like('NAME',$search);
 		$this->db->or_like('PIN',$search);
 		$query=$this->db->order_by('NAME ASC')->limit($limit,$start)
-				 ->get('ksa_members_list_as_on_04032021_1');
+				 ->get('ksa_list');
 		//echo $this->db->last_query($query);
 		$output .='<table id="property-list" class="table table-bordered" style="font-size:9px;table-layout:fixed;width:100%;word-break:break-all;">
 				<thead>

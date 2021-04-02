@@ -26,28 +26,35 @@ $this->load->view('layout/sidebar');
     <section class="content">
 
       <!-- Default box -->
+     
       <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Title</h3>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-              <i class="fas fa-minus"></i></button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-              <i class="fas fa-times"></i></button>
-          </div>
-        </div>
+      
+      
         <div class="card-body">
-          <?php
-          echo "<pre>"; 
+        <h3>WELCOME , <?php echo $this->session->userdata('name');?> user to Our System </h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+              <th colspan="2"><h4>USER DETAILS</h4></th>
+            </thead>
+            <tbody>
+              <tr>
+                <td> NAME</td>
+                <td><?php echo $this->session->userdata('name'); ?></td>                
+              </tr>
+              <tr>
+                 <td>EMAIL</td>
+                <td><?php echo $this->session->userdata('email'); ?></td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <?php
+          /* echo "<pre>"; 
           echo print_r($_SESSION);
-          echo "</pre>"
-          ?>
+          echo "</pre>" */
+          ?> -->
         </div>
         <!-- /.card-body -->
-        <div class="card-footer">
-          Footer
-        </div>
+        
         <!-- /.card-footer-->
       </div>
       <!-- /.card -->

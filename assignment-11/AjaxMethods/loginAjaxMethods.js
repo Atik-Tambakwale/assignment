@@ -1,4 +1,27 @@
 var path = $("#host").val();
+
+function get_columnName(name) {
+	var res = name.split(":");
+	var n = res[0].length;
+	return res[0].slice(0, n);
+}
+function order_columnName(order_type) {
+	var str = order_type.slice(16, 22);
+	return str.toLocaleUpperCase();
+}
+$(document).on("click", ".dataTables_wrapper .dataTable thead tr[role='row'] td", function () {
+	var data1 = $(this).attr("aria-label");
+	var colunm_name = get_columnName(data1);
+	var data2 = $(this).attr("class");
+	var orderby_name = order_columnName(data2);
+	$("#export-pdf-btn").removeData('colounm_name');
+	$("#export-pdf-btn").removeData('orderby_colunm');
+	$("#export-pdf-btn").attr({ 'data-colounm_name': colunm_name, 'data-orderby_colunm': orderby_name });
+	$("#export-excel-btn").removeData('colounm_name');
+	$("#export-excel-btn").removeData('orderby_colunm');
+	$("#export-excel-btn").attr({ 'data-colounm_name': colunm_name, 'data-orderby_colunm': orderby_name });
+});
+
 //TODO::user login
 $("#login-form").submit('click', function (e) {
 
@@ -30,86 +53,55 @@ $("#login-form").submit('click', function (e) {
 	}
 });
 
-function displayListKSAMEMBER(target) {
-	$.ajax({
-		type: "GET",
-		dataType: "JSON",
-		url: path + "displayKSAL",
+//TODO:: import a file in database
+$("#excel_file_upload").submit("click", function (e) {
+	e.preventDefault();
+	if ($("#excel_file_upload").parsley().isValid()) {
+		var csrf_test_name = $.cookie('csrf_cookie_name');
+		var excel_file = $("#excel_file").val();
+		$("#excel_file_upload").ajaxSubmit({
+			type: "POST",
+			dataType: "JSON",
+			url: path + "insert_excel_file",
+			headers: {
+				"Authorization": $.cookie("jwt")
+			},
+			data: {
+				csrf_test_name,
+				excel_file
+			},
+			beforeSend: function () {
+				document.getElementById("import_btn").disabled = true;
+			},
+			success: function (json) {
+				console.log(json);
+				if (json.status == 200) {
 
-		headers: {
-			"Authorization": $.cookie("jwt")
-		},
-		data: {},
+					$.toast({
+						text: 'excel file is imported successfully',
+						icon: 'success',
+						position: "top-right",
+					});
+					document.getElementById("import_btn").disabled = false;
+					document.getElementById("excel_file_upload").reset();
+					load_KSA_list(1);
+				}
+				else {
+					alert(json.msg);
+				}
+			}
+		})
+	}
+});
 
-		success: function (json) {
-			var str = "<table id='property-list' class='table table-bordered' style='font-size: 9px;table-layout: fixed; width: 100 %; word -break: break-all;'>" +
-				"<thead>" +
-				"<tr>" +
-				"<td>#<span class='pull-right'></span></td>" +
-				"<td>NUMBER</td>" +
-				"<td>MEMBER ID</td>" +
-				"<td>TITLE</td>" +
-				"<td>NAME</td>" +
-				"<td>ADDRESS 1</td>" +
-				"<td>ADDRESS 2</td>" +
-				"<td>ADDRESS 3</td>" +
-				"<td>ADDRESS 4</td>" +
-				"<td>CITY</td>" +
-				"<td>PIN</td>" +
-
-				"<td>MAGRETURN</td>" +
-				"<td>STOPMAIL</td>" +
-				"<td>DESTFILE</td>" +
-				"<td>EXPIRED</td>" +
-				"<td>LASTUPDT</td>" +
-				"<td>TOMON</td>" +
-				"<td>TOYR</td>" +
-				"<td>HANDDELVHANDDELV</td>";
-			"</tr>" +
-				"</thead>" +
-				"<tbody class='tbody'>";
-
-			$.each(json.data, function (key, val) {
-
-				str += "<tr><td>" + (key + 1) + "</td>" +
-
-					"<td>" + val.NUMB + "</td>" +
-					"<td>" + val.t_member + "</td>" +
-					"<td>" + val.TITLE + "</td>" +
-					"<td>" + val.NAME + "</td>" +
-					"<td>" + val.ADDR1 + "</td>" +
-					"<td>" + val.ADDR2 + "</td>" +
-					"<td>" + val.ADDR3 + "</td>" +
-					"<td>" + val.ADDR4 + "</td>" +
-					"<td>" + val.CITY + "</td>" +
-					"<td>" + val.PIN + "</td>" +
-
-					"<td>" + val.MAGRETURN + "</td>" +
-					"<td>" + val.STOPMAIL + "</td>" +
-					"<td>" + val.DESTFILE + "</td>" +
-					"<td>" + val.EXPIRED + "</td>" +
-					"<td>" + val.LASTUPDT + "</td>" +
-					"<td>" + val.TOMON + "</td>" +
-					"<td>" + val.TOYR + "</td>" +
-					"<td>" + val.HANDDELVHANDDELV + "</td></tr>";
-
-			})
-			str += "</tbody>" +
-				"</table>" +
-				"</div>";
-			$(target).html(str);
-			$("#property-list").DataTable();
-		}
-
-	});
-
-}
-
+//TODO::export pdf file
 $("#export-pdf-btn").click(function () {
-
-	var search = $("#searchBox").val();
-
 	var csrf_test_name = $.cookie('csrf_cookie_name');
+	var colounm_name = $(this).data("colounm_name");
+
+	var orderby_colunm = $(this).data("orderby_colunm");
+	//console.log(colounm_name, orderby_colunm);
+	var search = $(".dataTables_wrapper  .dataTables_filter input[type='search']").val();
 	$.ajax({
 		type: "GET",
 		dataType: "JSON",
@@ -119,52 +111,62 @@ $("#export-pdf-btn").click(function () {
 			"Authorization": $.cookie("jwt")
 		},
 		data: {
-			search, csrf_test_name
+			search, csrf_test_name, orderby_colunm, colounm_name
 		},
 		success: function (json) {
 			var str = "<h1>KSA Member list pdf document" +
 				"<table border='1px' style='border-color:#dfdfdf;font-size:10px' cellpadding='0' cellSpacing='0'>" +
 				"<thead>" +
 				"<tr>" +
-				"<td>#<span class='pull-right'></span></td>" +
-				"<td>NUMBER</td>" +
-				"<td>MEMBER ID</td>" +
+				"<td>#</td>" +
+				"<td>MEMBER_ID</td>" +
+				"<td>MEMBER_TYPE</td>" +
 				"<td>TITLE</td>" +
 				"<td>NAME</td>" +
-				"<td>ADDRESS 1</td>" +
-				"<td>ADDRESS 2</td>" +
-				"<td>ADDRESS 3</td>" +
-				"<td>ADDRESS 4</td>" +
+				"<td>ADDRESS_1</td>" +
+				"<td>ADDRESS_2</td>" +
+				"<td>ADDRESS_3</td>" +
+				"<td>ADDRESS_4</td>" +
 				"<td>CITY</td>" +
 				"<td>PIN</td>" +
-
+				"<td>MOBILE</td>" +
+				"<td>EMAIL</td>" +
+				"<td>MONTH</td>" +
+				"<td>YEAR</td>" +
+				"<td>DESTFILE</td>" +
 				"<td>MAGRETURN</td>" +
 				"<td>STOPMAIL</td>" +
-				"<td>DESTFILE</td>" +
 				"<td>EXPIRED</td>" +
+				"<td>HANDDELV</td>" +
 				"</tr>" +
 				"</thead>" +
 				"<tbody>";
-
+			console.log(json);
 			$.each(json.data, function (key, val) {
 
 				str += "<tr><td>" + (key + 1) + "</td>" +
 
-					"<td>" + val.NUMB + "</td>" +
-					"<td>" + val.t_member + "</td>" +
+					"<td>" + val.MEMBER_ID + "</td>" +
+					"<td>" + val.MEMBER_TYPE + "</td>" +
 					"<td>" + val.TITLE + "</td>" +
 					"<td>" + val.NAME + "</td>" +
-					"<td>" + val.ADDR1 + "</td>" +
-					"<td>" + val.ADDR2 + "</td>" +
-					"<td>" + val.ADDR3 + "</td>" +
-					"<td>" + val.ADDR4 + "</td>" +
+					"<td>" + val.ADDRESS_1 + "</td>" +
+					"<td>" + val.ADDRESS_2 + "</td>" +
+					"<td>" + val.ADDRESS_3 + "</td>" +
+					"<td>" + val.ADDRESS_4 + "</td>" +
 					"<td>" + val.CITY + "</td>" +
 					"<td>" + val.PIN + "</td>" +
-
+					"<td>" + val.MOBILE + "</td>" +
+					"<td>" + val.EMAIL + "</td>" +
+					"<td>" + val.MONTH + "</td>" +
+					"<td>" + val.YEAR + "</td>" +
 					"<td>" + val.MAGRETURN + "</td>" +
 					"<td>" + val.STOPMAIL + "</td>" +
 					"<td>" + val.DESTFILE + "</td>" +
-					"<td>" + val.EXPIRED + "</td>";
+					"<td>" + val.EXPIRED + "</td>" +
+
+
+					"<td>" + val.HANDDELV + "</td>";
 
 			})
 			str += "</tbody>" +
@@ -182,30 +184,13 @@ $("#export-pdf-btn").click(function () {
 		}
 	})
 });
+
+//TODO::export a excel file 
 $("#export-excel-btn").click(function () {
-	var search = $("#searchBox").val();
-	location.href = path + "exportExcel?search=" + search;
+	var search = $(".dataTables_wrapper  .dataTables_filter input[type='search']").val();
+	var colounm_name = $(this).data("colounm_name");
+	var orderby_colunm = $(this).data("orderby_colunm");
+	location.href = path + "exportExcel?search=" + search + "&colounm_name=" + colounm_name + "&orderby_colunm=" + orderby_colunm;
 });
-// });
 
-/* var doc = new jsPDF();
 
-$("#pdf_report").on("click", function () {
-
-	var table = $("#property-list").DataTable();
-	doc.fromHTML(`<html><head><title>KSA MEMBER List</title></head><body>` + $("#property-list").html + `</body></html>`);
-	doc.save('pdf_report.pdf');
-})
- */
-
-/* function load_KSA_list(page) {
-	$.ajax({
-		url: path + "displayPList" + page,
-		type: "GET",
-		dataType: "JSON",
-		success: function (data) {
-			$("#load-KSA-list").html(data.list_table);
-			$("#pagination_link").html(data.pagiantion_link);
-		}
-	})
-} */

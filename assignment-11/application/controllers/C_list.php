@@ -25,11 +25,22 @@ class C_list extends MY_Controller{
 			try{
 				$auth = $this->token->decodeToken($this->token_verification()); 
 				$search=$this->input->get('search');
-				$this->db->like('city',$search)->or_like('city',$search)->like('ADDR1',$search)->like('ADDR2',$search)->or_like('ADDR3',$search)->or_like('ADDR4',$search);	
-						
-				$result =$this->db->order_by('NAME ASC')->get('ksa_members_list_as_on_04032021_1');
+				$colounm_name=$this->input->get('colounm_name');
+				$orderby_colunm=$this->input->get('orderby_colunm');
+
+				$this->db->like('CITY',$search)->or_like('CITY',$search)->like('ADDRESS_1',$search)->like('ADDRESS_2',$search)->like('ADDRESS_3',$search);
+				$this->db->like('NAME',$search)->or_like('TITLE',$search)->like('NAME',$search);
+				$this->db->or_like('PIN',$search);
+				if($colounm_name!='' && $orderby_colunm!=''){
+					$this->db->order_by($colounm_name." ".$orderby_colunm);
+				}
+				$this->db->limit(20);
+				$result =$this->db->get('ksa_list');
 				$data=$result->result();
 				//echo $this->db->last_query($result);
+				/* echo "<pre>";
+				print_r($data);
+				echo "</pre>"; */
 				if (count($data) > 0) {
 				
 					$response=[
@@ -51,7 +62,7 @@ class C_list extends MY_Controller{
 			echo json_encode($response);
 		
 	}
-	public function displaytableFormat()
+	/* public function displaytableFormat()
 	{
 		$this->load->view('display-list/excel_report');
 	}
@@ -81,8 +92,8 @@ class C_list extends MY_Controller{
 
 			}
 			echo json_encode($response);
-	}
-	public function phpExcelList()
+	} */
+	/* public function phpExcelList()
 	{
 		 $response=[];
 		 		$data=[];
@@ -94,24 +105,24 @@ class C_list extends MY_Controller{
 				$spreadsheet = new Spreadsheet();
 				$sheet = $spreadsheet->getActiveSheet();
 				$table_columns = [
-					"A1"=>"NUMB",
-					"B1"=>"t_member",
+					"A1"=>"MEMBER_ID",
+					"B1"=>"MEMBER_TYPE",
 					"C1"=>"TITLE",
 					"D1"=>"NAME",
-					"E1"=>"ADDR1",
-					"F1"=>"ADDR2",
-					"G1"=>"ADDR3",
-					"H1"=>"ADDR4",
+					"E1"=>"ADDRESS_1",
+					"F1"=>"ADDRESS_2",
+					"G1"=>"ADDRESS_3",
+					"H1"=>"ADDRESS_4",
 					"I1"=>"CITY",
 					"J1"=>"PIN",
-					"K1"=>"MAGRETURN",
-					"L1"=>"STOPMAIL",
-					"M1"=>"DESTFILE",
-					"N1"=>"EXPIRED",
-					"O1"=>"LASTUPDT",
-					"P1"=>"OLDNUMB",
-					"Q1"=>"TOMON",
-					"R1"=>"TOYR",
+					"K1"=>"MOBILE",
+					"L1"=>"EMAIL",
+					"M1"=>"MONTH",
+					"N1"=>"YEAR",
+					"O1"=>"MAGRETURN",
+					"P1"=>"STOPMAIL",
+					"Q1"=>"DESTFILE",
+					"R1"=>"EXPIRED",
 					"S1"=>"HANDDELV"
 				];
 				foreach ($table_columns as $key => $value) {
@@ -122,7 +133,7 @@ class C_list extends MY_Controller{
 				$writer = new Xlsx($spreadsheet);
 				$writer->save('export_excel.xlsx');
 		 
-	}	
+	}	 */
 }
 
 ?>

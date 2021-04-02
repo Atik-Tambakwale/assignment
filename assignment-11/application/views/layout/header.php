@@ -24,9 +24,13 @@
   <link rel="stylesheet" href="<?php echo base_url()?>assets/select2/css/select2.min.css">
   <link rel="stylesheet" href="<?php echo base_url()?>assets/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- DataTables -->
-  <link rel="stylesheet" href="<?php echo base_url()?>assets/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <!-- <link rel="stylesheet" href="<?php echo base_url()?>assets/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="<?php echo base_url()?>assets/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" integrity="sha512-bYPO5jmStZ9WI2602V2zaivdAnbAhtfzmxnEGh9RwtlI00I9s8ulGe4oBa5XxiC6tCITJH/QG70jswBhbLkxPw==" crossorigin="anonymous" />
+   -->
+   <link rel="stylesheet" href="https:////cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+   
+   
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" integrity="sha512-bYPO5jmStZ9WI2602V2zaivdAnbAhtfzmxnEGh9RwtlI00I9s8ulGe4oBa5XxiC6tCITJH/QG70jswBhbLkxPw==" crossorigin="anonymous" />
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <style>
   div.dataTables_wrapper div.dataTables_length label {
@@ -148,7 +152,8 @@ b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.css"/>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <li class="nav-item ">
-					<a class="btn btn-default" href="<?=base_url()?>C_login/logout">Logout</a>                                                                                                                                                              
+					<a class="btn btn- btn-sm" href="<?=base_url()?>C_login/logout"><i class="fas fa-sign-out-alt" style="font-size: 25px;
+"></i></a>                                                                                                                                                              
 				</li>
       </li>
   
